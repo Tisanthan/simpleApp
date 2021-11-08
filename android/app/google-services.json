@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "454255345711",
+    "project_id": "simpleadd-ed791",
+    "storage_bucket": "simpleadd-ed791.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:454255345711:android:05644a04de9dcb025186da",
+        "android_client_info": {
+          "package_name": "com.example.simpleadd"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "454255345711-ngjbjrghl5849ne2vttvrtra5hilqk13.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.simpleadd",
+            "certificate_hash": "c946fc7effbd431ce0422c84960ac200d9a07231"
+          }
+        },
+        {
+          "client_id": "454255345711-a6mhs0g70te8h6d8eauu97r0hnd1pkuq.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDcjn-xD7I8FliXTOmrFFzaPFIMAs5Kdd4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "454255345711-a6mhs0g70te8h6d8eauu97r0hnd1pkuq.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
