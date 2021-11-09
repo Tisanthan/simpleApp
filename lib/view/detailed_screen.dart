@@ -36,14 +36,16 @@ class _DetailedScreenState extends State<DetailedScreen> {
           mainAxisAlignment: MainAxisAlignment.start,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            Container(
+            SizedBox(
               width: double.infinity,
               height: 80,
               child: Card(
                 child: Column(
+                  mainAxisAlignment: MainAxisAlignment.start,
                   children: [
                     Row(
-                      mainAxisSize: MainAxisSize.min,
+                      // mainAxisSize: MainAxisSize.min,
+                      mainAxisAlignment: MainAxisAlignment.start,
                       children: [
                         const Text(
                           "Title: ",
@@ -66,7 +68,7 @@ class _DetailedScreenState extends State<DetailedScreen> {
                       mainAxisSize: MainAxisSize.min,
                       children: [
                         const Text(
-                          "Price: ",
+                          "Price:",
                           style: TextStyle(fontSize: 20.0, color: primaryColor),
                         ),
                         const SizedBox(
@@ -75,7 +77,16 @@ class _DetailedScreenState extends State<DetailedScreen> {
                         Text(
                           widget.price,
                           style: const TextStyle(
-                              fontSize: 20.0, color: primaryColor),
+                              fontSize: 20.0,
+                              color: primaryColor,
+                              fontWeight: FontWeight.bold),
+                        ),
+                        const Text(
+                          "LKR",
+                          style: TextStyle(
+                              fontSize: 20.0,
+                              color: primaryColor,
+                              fontWeight: FontWeight.bold),
                         ),
                       ],
                     ),

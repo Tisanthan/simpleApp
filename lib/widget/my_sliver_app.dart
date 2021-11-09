@@ -67,8 +67,10 @@ class MySliverAppBar extends SliverPersistentHeaderDelegate {
                         );
                       }
 
-                      var style =
-                          TextStyle(fontSize: 16.0, color: Colors.white);
+                      var style = const TextStyle(
+                          fontSize: 16.0,
+                          color: Colors.white,
+                          fontWeight: FontWeight.bold);
 
                       return Container(
                         height: 200.0,
@@ -99,61 +101,76 @@ class MySliverAppBar extends SliverPersistentHeaderDelegate {
                                       child: Container(
                                         color: Color(0x80000000),
                                         child: Center(
-                                          child: Column(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.start,
-                                            mainAxisSize: MainAxisSize.min,
-                                            children: [
-                                              Row(
-                                                mainAxisAlignment:
-                                                    MainAxisAlignment.start,
-                                                children: [
-                                                  Text(
-                                                    document['title'],
-                                                    style: style,
-                                                  ),
-                                                ],
-                                              ),
-                                              const SizedBox(
-                                                height: 20,
-                                              ),
-                                              Row(
-                                                mainAxisAlignment:
-                                                    MainAxisAlignment.center,
-                                                children: [
-                                                  Text(
-                                                    document['price'],
-                                                    style: style,
-                                                  ),
-                                                ],
-                                              ),
-                                              const SizedBox(
-                                                height: 20,
-                                              ),
-                                              Row(
-                                                mainAxisAlignment:
-                                                    MainAxisAlignment.start,
-                                                children: [
-                                                  Text(
-                                                    document['time'],
-                                                    style: style,
-                                                  ),
-                                                ],
-                                              ),
-                                              const SizedBox(
-                                                height: 20,
-                                              ),
-                                              Row(
-                                                mainAxisAlignment:
-                                                    MainAxisAlignment.end,
-                                                children: [
-                                                  Text(
-                                                    document['postedBy'],
-                                                    style: style,
-                                                  ),
-                                                ],
-                                              ),
-                                            ],
+                                          child: Padding(
+                                            padding: const EdgeInsets.all(8.0),
+                                            child: Column(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.start,
+                                              mainAxisSize: MainAxisSize.min,
+                                              children: [
+                                                Row(
+                                                  mainAxisAlignment:
+                                                      MainAxisAlignment.start,
+                                                  children: [
+                                                    Text(
+                                                      document['title'],
+                                                      style: style,
+                                                    ),
+                                                  ],
+                                                ),
+                                                const SizedBox(
+                                                  height: 20,
+                                                ),
+                                                Row(
+                                                  mainAxisAlignment:
+                                                      MainAxisAlignment.center,
+                                                  children: [
+                                                    Text(
+                                                      "PRICE ",
+                                                      style: style,
+                                                    ),
+                                                    Text(
+                                                      document['price'],
+                                                      style: style,
+                                                    ),
+                                                    Text(
+                                                      "LKR",
+                                                      style: style,
+                                                    ),
+                                                  ],
+                                                ),
+                                                const SizedBox(
+                                                  height: 20,
+                                                ),
+                                                Row(
+                                                  mainAxisAlignment:
+                                                      MainAxisAlignment.start,
+                                                  children: [
+                                                    Text(
+                                                      "Posted By: ",
+                                                      style: style,
+                                                    ),
+                                                    Text(
+                                                      document['postedBy'],
+                                                      style: style,
+                                                    ),
+                                                  ],
+                                                ),
+                                                const SizedBox(
+                                                  height: 20,
+                                                ),
+                                                Row(
+                                                  mainAxisAlignment:
+                                                      MainAxisAlignment.end,
+                                                  children: [
+                                                    Text(
+                                                      document['time'],
+                                                      style: style,
+                                                    ),
+                                                  ],
+                                                ),
+                                              ],
+                                            ),
                                           ),
                                         ),
                                       ),
