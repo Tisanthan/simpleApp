@@ -1,5 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:simpleadd/view/upload_screen.dart';
 
 class DetailedScreen extends StatefulWidget {
   final String title, description, createBy, url, time;
@@ -52,7 +53,21 @@ class _DetailedScreenState extends State<DetailedScreen> {
               ],
             ),
             Divider(),
-            CachedNetworkImage(imageUrl: widget.url)
+            CachedNetworkImage(imageUrl: widget.url),
+            Divider(),
+            // ElevatedButton(
+            //     onPressed: () {
+            //       Navigator.push(
+            //           context,
+            //           MaterialPageRoute(
+            //             builder: (context) => UploadScreen(
+            //               title: widget.title,
+            //               description: widget.description,
+            //               url: widget.url,
+            //             ),
+            //           ));
+            //     },
+            //     child: Text("Edit")),
           ],
         ),
       ),

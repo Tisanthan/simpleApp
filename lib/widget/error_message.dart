@@ -5,10 +5,10 @@ Widget showErrorMessage(_errorMessage) {
     return Padding(
       padding: const EdgeInsets.all(10.0),
       child: Center(
-        child: new Text(
+        child: Text(
           _errorMessage,
           textAlign: TextAlign.center,
-          style: TextStyle(
+          style: const TextStyle(
               fontSize: 13.0,
               color: Colors.red,
               height: 1.0,

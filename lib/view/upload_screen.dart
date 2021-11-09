@@ -6,6 +6,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:intl/intl.dart';
 
 enum AppState {
   free,
@@ -14,7 +15,9 @@ enum AppState {
 }
 
 class UploadScreen extends StatefulWidget {
-  UploadScreen({Key? key}) : super(key: key);
+  String? title, description, url;
+  UploadScreen({Key? key, this.title, this.description, this.url})
+      : super(key: key);
 
   @override
   _UploadScreenState createState() => _UploadScreenState();
@@ -69,7 +72,7 @@ class _UploadScreenState extends State<UploadScreen> {
       'title': _title, // John Doe
       'add': _add,
       'postedBy': _name,
-      'time': "${DateTime.now()}",
+      'time': DateFormat.yMd().add_jm().format(DateTime.now()),
       'createdAt': DateTime.now(),
       'url': _url,
       'uid': userId,
