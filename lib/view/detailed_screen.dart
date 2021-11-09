@@ -6,7 +6,7 @@ import 'package:simpleadd/constants/constant.dart';
 import 'package:simpleadd/view/upload_screen.dart';
 
 class DetailedScreen extends StatefulWidget {
-  final String title, description, createBy, url, time, price;
+  final String title, description, createBy, url, time, price, docId;
 
   const DetailedScreen(
       {Key? key,
@@ -15,6 +15,7 @@ class DetailedScreen extends StatefulWidget {
       required this.createBy,
       required this.url,
       required this.time,
+      required this.docId,
       required this.price})
       : super(key: key);
 
@@ -122,19 +123,27 @@ class _DetailedScreenState extends State<DetailedScreen> {
                 ),
               ),
             ),
-            // ElevatedButton(
-            //     onPressed: () {
-            //       Navigator.push(
-            //           context,
-            //           MaterialPageRoute(
-            //             builder: (context) => UploadScreen(
-            //               title: widget.title,
-            //               description: widget.description,
-            //               url: widget.url,
-            //             ),
-            //           ));
-            //     },
-            //     child: Text("Edit")),
+            MaterialButton(
+                minWidth: 200,
+                color: primaryColor,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(20.0),
+                ),
+                onPressed: () {
+                  Navigator.pushReplacement(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => UploadScreen(
+                          addTitle: widget.title,
+                          description: widget.description,
+                          rurl: widget.url,
+                          price: widget.price,
+                          docId: widget.docId,
+                          edit: true,
+                        ),
+                      ));
+                },
+                child: Text("Edit")),
           ],
         ),
       ),

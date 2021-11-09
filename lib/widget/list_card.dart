@@ -83,6 +83,7 @@ class _ListCardState extends State<ListCard> {
                             createBy: snapshot.data!.docs[index]['postedBy'],
                             time: snapshot.data!.docs[index]['time'],
                             price: snapshot.data!.docs[index]['price'],
+                            docId: snapshot.data!.docs[index].id,
                           ),
                         ),
                       );

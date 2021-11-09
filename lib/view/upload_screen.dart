@@ -1,12 +1,13 @@
 import 'dart:io';
 
-import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
-import 'package:firebase_core/firebase_core.dart' as firebase_core;
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_core/firebase_core.dart' as firebase_core;
+import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
+
 import 'package:simpleadd/constants/constant.dart';
 
 enum AppState {
@@ -16,7 +17,17 @@ enum AppState {
 }
 
 class UploadScreen extends StatefulWidget {
-  const UploadScreen({Key? key}) : super(key: key);
+  String? addTitle, description, price, docId, rurl;
+  bool edit;
+  UploadScreen(
+      {Key? key,
+      this.rurl,
+      this.addTitle,
+      this.description,
+      this.price,
+      this.docId,
+      this.edit = false})
+      : super(key: key);
 
   @override
   _UploadScreenState createState() => _UploadScreenState();
@@ -42,6 +53,12 @@ class _UploadScreenState extends State<UploadScreen> {
   CollectionReference users = FirebaseFirestore.instance.collection('notices');
   firebase_storage.FirebaseStorage storage =
       firebase_storage.FirebaseStorage.instance;
+
+  final TitleController = TextEditingController();
+  final DescController = TextEditingController();
+  final PriceController = TextEditingController();
+
+  bool get edit => widget.edit;
 
   MaterialBanner _showMaterialBanner(BuildContext context) {
     return MaterialBanner(
@@ -91,6 +108,22 @@ class _UploadScreenState extends State<UploadScreen> {
 
   Future<void> addNotice() async {
     // Call the user's CollectionReference to add a new user
+    if (edit) {
+      return users.doc(widget.docId).set({
+        'title': _title, // John Doe
+        'add': _add,
+        'postedBy': _name,
+        'price': _price,
+        'time': DateFormat.yMd().add_jm().format(DateTime.now()),
+        'createdAt': DateTime.now(),
+        'url': (state == AppState.picked) ? _url : widget.rurl,
+        'uid': userId,
+      }).then((value) {
+        print("Notice Updated");
+      }).catchError((error) {
+        print("Failed to Update notice: $error");
+      });
+    }
     return users.add({
       'title': _title, // John Doe
       'add': _add,
@@ -202,12 +235,18 @@ class _UploadScreenState extends State<UploadScreen> {
         .get()
         .then((DocumentSnapshot documentSnapshot) {
       if (documentSnapshot.exists) {
-        // _name = documentSnapshot.data()!["name"];
-        print('Document data: ${documentSnapshot.data()}');
+        _name = documentSnapshot["name"];
+        // print('Document data: ${documentSnapshot.data()}');
       } else {
         print('Document does not exist on the database');
       }
     });
+    if (edit) {
+      TitleController.text = widget.addTitle!;
+      DescController.text = widget.description!;
+      PriceController.text = widget.price!;
+      print("editable");
+    }
   }
 
   @override
@@ -260,6 +299,7 @@ class _UploadScreenState extends State<UploadScreen> {
                   onSaved: (value) => _title = value!,
                   maxLines: 1,
                   keyboardType: TextInputType.text,
+                  controller: TitleController,
                   autofocus: false,
                   textInputAction: TextInputAction.next,
                   onFieldSubmitted: (_) => FocusScope.of(context).nextFocus(),
@@ -295,6 +335,7 @@ class _UploadScreenState extends State<UploadScreen> {
                   minLines: 5,
                   onSaved: (value) => _add = value!,
                   maxLines: 7,
+                  controller: DescController,
                   keyboardType: TextInputType.multiline,
                   autofocus: false,
                   textInputAction: TextInputAction.newline,
@@ -332,6 +373,7 @@ class _UploadScreenState extends State<UploadScreen> {
                   maxLines: 1,
                   keyboardType: TextInputType.number,
                   autofocus: false,
+                  controller: PriceController,
                   textInputAction: TextInputAction.next,
                   onFieldSubmitted: (_) => FocusScope.of(context).nextFocus(),
                   validator: (val) => val!.isEmpty ? "Enter Amount" : null,

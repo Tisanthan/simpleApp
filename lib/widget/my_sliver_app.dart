@@ -157,7 +157,7 @@ class MySliverAppBar extends SliverPersistentHeaderDelegate {
                                                   ],
                                                 ),
                                                 const SizedBox(
-                                                  height: 20,
+                                                  height: 10,
                                                 ),
                                                 Row(
                                                   mainAxisAlignment:
@@ -186,6 +186,7 @@ class MySliverAppBar extends SliverPersistentHeaderDelegate {
                                             createBy: document['postedBy'],
                                             time: document['time'],
                                             price: document['price'],
+                                            docId: document.id,
                                           ),
                                         ),
                                       );
