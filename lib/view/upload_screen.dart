@@ -7,6 +7,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
+import 'package:simpleadd/constants/constant.dart';
 
 enum AppState {
   free,
@@ -15,16 +16,14 @@ enum AppState {
 }
 
 class UploadScreen extends StatefulWidget {
-  String? title, description, url;
-  UploadScreen({Key? key, this.title, this.description, this.url})
-      : super(key: key);
+  const UploadScreen({Key? key}) : super(key: key);
 
   @override
   _UploadScreenState createState() => _UploadScreenState();
 }
 
 class _UploadScreenState extends State<UploadScreen> {
-  late String _title, _add, _name = "tisu";
+  late String _title, _add, _price, _name = "tisu";
   late String? userId;
   late File _image;
   late String _url;
@@ -44,6 +43,27 @@ class _UploadScreenState extends State<UploadScreen> {
   firebase_storage.FirebaseStorage storage =
       firebase_storage.FirebaseStorage.instance;
 
+  MaterialBanner _showMaterialBanner(BuildContext context) {
+    return MaterialBanner(
+        content: const Text('Please add the Image and check the form'),
+        leading: const Icon(Icons.error),
+        padding: const EdgeInsets.all(15),
+        backgroundColor: primaryColor,
+        contentTextStyle: const TextStyle(
+            fontSize: 18, fontWeight: FontWeight.bold, color: Colors.indigo),
+        actions: [
+          TextButton(
+            onPressed: () {
+              ScaffoldMessenger.of(context).hideCurrentMaterialBanner();
+            },
+            child: const Text(
+              'Cancel',
+              style: TextStyle(color: Colors.purple),
+            ),
+          ),
+        ]);
+  }
+
   Future<void> handleUploadTask() async {
     firebase_storage.UploadTask task = firebase_storage.FirebaseStorage.instance
         .ref('uploads/')
@@ -52,12 +72,15 @@ class _UploadScreenState extends State<UploadScreen> {
     try {
       // Storage tasks function as a Delegating Future so we can await them.
       firebase_storage.TaskSnapshot snapshot = await task;
-      _url = await task.snapshot.ref.getDownloadURL();
+      setState(() async {
+        _url = await task.snapshot.ref.getDownloadURL();
+      });
+      // _url = await task.snapshot.ref.getDownloadURL();
       print('Uploaded ${snapshot.bytesTransferred} bytes.');
     } on firebase_core.FirebaseException catch (e) {
       // The final snapshot is also available on the task via `.snapshot`,
       // this can include 2 additional states, `TaskState.error` & `TaskState.canceled`
-      print(task.snapshot);
+      print("image exeption${task.snapshot}");
 
       if (e.code == 'permission-denied') {
         print('User does not have permission to upload to this reference.');
@@ -72,6 +95,7 @@ class _UploadScreenState extends State<UploadScreen> {
       'title': _title, // John Doe
       'add': _add,
       'postedBy': _name,
+      'price': _price,
       'time': DateFormat.yMd().add_jm().format(DateTime.now()),
       'createdAt': DateTime.now(),
       'url': _url,
@@ -112,6 +136,7 @@ class _UploadScreenState extends State<UploadScreen> {
         _inProcess = false;
       });
     } else if (validateAndSave()) {
+      print("yessssssssssss");
       await {
         if (_image != null)
           {await handleUploadTask()}
@@ -144,34 +169,18 @@ class _UploadScreenState extends State<UploadScreen> {
 
   bool validateAndSave() {
     final form = _formKey.currentState;
-    if (form != null && form.validate()) {
+    if (form != null && form.validate() && state == AppState.picked) {
       form.save();
       print('Form Validate : true');
       return true;
+    } else {
+      ScaffoldMessenger.of(context)
+        ..removeCurrentMaterialBanner()
+        ..showMaterialBanner(_showMaterialBanner(context));
+      print('Form Validate : false');
+      return false;
     }
-    print('Form Validate : false');
-    return false;
   }
-
-  // String? noticeValidate(String value) {
-  //   if (value.length < 50 && state == AppState.free) {
-  //     if (value.isEmpty && state == AppState.free) {
-  //       return "Description shuld be either filled or import Phot";
-  //     } else {
-  //       return "Notice contains above 50 charecter or import notice";
-  //     }
-  //   } else if (value.length < 50 || value.isEmpty && state == AppState.picked) {
-  //     if (value.isEmpty && state == AppState.picked) {
-  //       return "Please crop the imported Notice or fill the notice";
-  //     } else if (state == AppState.picked) {
-  //       return "Crop the impoterd notice or continue writting";
-  //     } else {
-  //       return null;
-  //     }
-  //   } else {
-  //     return null;
-  //   }
-  // }
 
   @override
   void initState() {
@@ -222,7 +231,7 @@ class _UploadScreenState extends State<UploadScreen> {
           child: _inProcess
               ? const SizedBox(
                   height: 30,
-                  width: 100,
+                  width: 30,
                   child: CircularProgressIndicator(),
                 )
               : Row(
@@ -245,58 +254,127 @@ class _UploadScreenState extends State<UploadScreen> {
             mainAxisAlignment: MainAxisAlignment.start,
             children: <Widget>[
               Container(
-                margin: EdgeInsets.only(top: 10.0, left: 10.0, right: 10.0),
+                margin: bmargin,
                 child: TextFormField(
-                  minLines: 1,
-                  maxLines: 3,
-                  onSaved: (newValue) => _title = newValue!,
-                  keyboardType: TextInputType.multiline,
+                  style: const TextStyle(color: primaryColor),
+                  onSaved: (value) => _title = value!,
+                  maxLines: 1,
+                  keyboardType: TextInputType.text,
+                  autofocus: false,
+                  textInputAction: TextInputAction.next,
+                  onFieldSubmitted: (_) => FocusScope.of(context).nextFocus(),
                   validator: (value) =>
                       value!.isEmpty ? "Please enter title" : null,
-                  decoration: const InputDecoration(
-                    labelText: 'Title',
-                    hintText: 'Title',
-                    hintStyle: TextStyle(color: Colors.grey),
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.all(Radius.circular(5.0)),
-                    ),
+                  decoration: InputDecoration(
+                    // floatingLabelStyle:
+                    //     const TextStyle(color: primaryColor),
+                    fillColor: lprimaryColor,
+                    labelText: "ADD's Title",
+                    hintText: "Online Advertisement",
+                    hintStyle: const TextStyle(color: primaryColor),
+                    focusedBorder: OutlineInputBorder(
+                        borderSide:
+                            const BorderSide(color: Colors.white, width: 2.0),
+                        borderRadius: BorderRadius.circular(30.0)),
+                    enabledBorder: OutlineInputBorder(
+                        borderSide:
+                            const BorderSide(color: lprimaryColor, width: 2.0),
+                        borderRadius: BorderRadius.circular(30.0)),
+                    filled: true,
+                    // border: OutlineInputBorder(
+                    //   borderSide: BorderSide(color: Colors.white),
+                    // ),
                   ),
                 ),
               ),
               Container(
-                margin: EdgeInsets.only(top: 10.0, left: 10.0, right: 10.0),
+                margin:
+                    const EdgeInsets.only(top: 10.0, left: 10.0, right: 10.0),
                 child: TextFormField(
+                  style: const TextStyle(color: primaryColor),
                   minLines: 5,
-                  maxLines: 50,
-                  onChanged: (newValue) => _add = newValue,
+                  onSaved: (value) => _add = value!,
+                  maxLines: 7,
                   keyboardType: TextInputType.multiline,
-                  validator: (value) =>
-                      value!.isEmpty ? "please enter description" : null,
-                  decoration: const InputDecoration(
-                    labelText: 'Description',
-                    hintText: 'Write Description content or take a photo',
-                    hintStyle: TextStyle(color: Colors.grey),
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.all(Radius.circular(5.0)),
-                    ),
+                  autofocus: false,
+                  textInputAction: TextInputAction.newline,
+                  onFieldSubmitted: (_) => FocusScope.of(context).nextFocus(),
+                  validator: (val) => val!.isEmpty
+                      ? "Describes something about your ADD"
+                      : null,
+                  decoration: InputDecoration(
+                    fillColor: lprimaryColor,
+                    labelText: "ADD's Descriptions",
+                    hintMaxLines: 5,
+                    hintStyle: const TextStyle(color: primaryColor),
+                    hintText:
+                        "FaceBook Page \nTwitter Notify \nDigital Margeting \n#marketing #design",
+                    // border: OutlineInputBorder(
+                    //   borderSide: BorderSide(),
+                    // ),
+                    focusedBorder: OutlineInputBorder(
+                        borderSide:
+                            const BorderSide(color: Colors.white, width: 2.0),
+                        borderRadius: BorderRadius.circular(30.0)),
+                    enabledBorder: OutlineInputBorder(
+                        borderSide:
+                            const BorderSide(color: lprimaryColor, width: 2.0),
+                        borderRadius: BorderRadius.circular(30.0)),
+                    filled: true,
                   ),
                 ),
               ),
               Container(
-                margin: EdgeInsets.only(top: 10.0, left: 10.0, right: 10.0),
+                margin: bmargin,
+                child: TextFormField(
+                  style: const TextStyle(color: primaryColor),
+                  onSaved: (value) => _price = value!,
+                  maxLines: 1,
+                  keyboardType: TextInputType.number,
+                  autofocus: false,
+                  textInputAction: TextInputAction.next,
+                  onFieldSubmitted: (_) => FocusScope.of(context).nextFocus(),
+                  validator: (val) => val!.isEmpty ? "Enter Amount" : null,
+                  decoration: InputDecoration(
+                    // floatingLabelStyle:
+                    //     const TextStyle(color: primaryColor),
+                    prefixText: "LKR: ",
+                    fillColor: lprimaryColor,
+                    labelText: "Price",
+                    hintText: "599.00",
+                    hintStyle: const TextStyle(color: primaryColor),
+                    focusedBorder: OutlineInputBorder(
+                        borderSide:
+                            const BorderSide(color: Colors.white, width: 2.0),
+                        borderRadius: BorderRadius.circular(30.0)),
+                    enabledBorder: OutlineInputBorder(
+                        borderSide:
+                            const BorderSide(color: lprimaryColor, width: 2.0),
+                        borderRadius: BorderRadius.circular(30.0)),
+                    filled: true,
+                    // border: OutlineInputBorder(
+                    //   borderSide: BorderSide(color: Colors.white),
+                    // ),
+                  ),
+                ),
+              ),
+              Container(
+                margin: bmargin,
                 decoration: BoxDecoration(
                   shape: BoxShape.rectangle,
-                  border: Border.all(color: Colors.blueAccent),
+                  borderRadius: BorderRadius.circular(30.0),
+                  color: lprimaryColor,
+                  // border: Border.all(color: Colors.blueAccent),
                 ),
                 child: Column(
                   children: <Widget>[
-                    const Center(
-                      child: Text(
-                        "Import Picture",
-                        style: TextStyle(
-                            fontWeight: FontWeight.bold, color: Colors.black),
-                      ),
-                    ),
+                    // const Center(
+                    //   child: Text(
+                    //     "Import Picture",
+                    //     style: TextStyle(
+                    //         fontWeight: FontWeight.bold, color: Colors.black),
+                    //   ),
+                    // ),
                     const SizedBox(
                       height: 5.0,
                     ),
@@ -331,7 +409,10 @@ class _UploadScreenState extends State<UploadScreen> {
                                 SizedBox(
                                   height: 50,
                                   width: 50,
-                                  child: Icon(Icons.camera),
+                                  child: Icon(
+                                    Icons.camera,
+                                    color: Colors.white,
+                                  ),
                                 ),
                               ],
                             ),
@@ -364,7 +445,10 @@ class _UploadScreenState extends State<UploadScreen> {
                                 SizedBox(
                                   height: 50,
                                   width: 50,
-                                  child: Icon(Icons.phone),
+                                  child: Icon(
+                                    Icons.mobile_friendly,
+                                    color: Colors.white,
+                                  ),
                                 ),
                               ],
                             ),
@@ -376,12 +460,13 @@ class _UploadScreenState extends State<UploadScreen> {
                 ),
               ),
               Container(
-                margin: EdgeInsets.all(10.0),
-                padding: EdgeInsets.all(5.0),
+                margin: const EdgeInsets.all(10.0),
+                padding: const EdgeInsets.all(5.0),
                 decoration: BoxDecoration(
-                  shape: BoxShape.rectangle,
-                  border: Border.all(color: Colors.blueAccent),
-                ),
+                    shape: BoxShape.rectangle,
+                    borderRadius: BorderRadius.circular(20)
+                    // border: Border.all(color: Colors.blueAccent),
+                    ),
                 child: state == AppState.picked
                     ? Image.file(_image)
                     : const Center(

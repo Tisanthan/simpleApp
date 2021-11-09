@@ -59,7 +59,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
           'email': _email,
         });
         print('Data recorded successfully');
-        Navigator.pushNamed(context, "/upload");
+        Navigator.pushNamedAndRemoveUntil(context, "/upload", (route) => false);
       } catch (e) {
         print('Error: $e');
         var errorMessage;
